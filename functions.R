@@ -1,22 +1,26 @@
 #functions
 #This loads all of the functions to be used
 
+
+
 #These functions are large, and so are stored in separate files
-source("CompileOutput1.R")
-source("CompileOutputMany.R")
-source("SubsetStreets.R")
+#source("CompileOutput1.R")
+#source("CompileOutputMany.R")
+source("SubsetWords.R")
 source("RemoveSpecialCharacters.R")
 source("MissingZips.R")
-source("VbetterComp.R")
+source("Vcomp.R")
 source("DataComp.R")
 source("Astack.R")
 source("Build.Primary.R")
 source("DataGrepl.R")
-source("BreakNames.R")
+#source("BreakNames.R")
 source("Build.Secondary.R")
 source("DataDate.R")
 source("Vgrep.R")
 source("Vgrepl.R")
+source("Splitter.R")
+
 
 #This function allows finding the intersection of several sets
 intersectSeveral <- function(...) { Reduce(intersect, list(...)) } 
@@ -32,6 +36,6 @@ one.drop = function(x){x[nchar(x) > 1]}
 SortLength = function(x){x[sort(nchar(x), decreasing = TRUE, index.return = TRUE)[[2]]]}
 
 #This function converts all NA's in a character vector to empty values
-na.to.empty = function(x){return(x[which(is.na(x))] = "")}
-
+na.to.empty = function(x){x[which(is.na(x))] = ""
+return(x)}
 
