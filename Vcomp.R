@@ -1,7 +1,7 @@
 #VbetterComp.R
 
 #Compare two values and return FALSE if either is NA
-betterComp = function(x,y){
+betterComp = function(x,y, messageLevel = 0){
   z = (x == y)
   z[is.na(z)] = FALSE
   return(z)
