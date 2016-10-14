@@ -7,9 +7,13 @@
 #load necessary functions
 source("functions.R")
 
+messageLevel = 5
+
 #Load the data sets from PowerSchool (SMS) and the Direct Certification file (DirectCert)
 SMS <- read.csv("~/DirectCertLunches/GTHstudents.csv", stringsAsFactors = FALSE)
+SMS <- read.csv("old data files/GTHstudents.csv", stringsAsFactors = FALSE)
 DirectCert <- read.csv("~/DirectCertLunches/DirectCertCasesNov2015.csv", stringsAsFactors = FALSE)
+DirectCert <- read.csv("old data files/DirectCertCasesNov2015.csv", stringsAsFactors = FALSE)
 
 #remove students below minAge
 minAge = 12
@@ -26,11 +30,10 @@ SMS$DOB = as.Date(SMS$DOB, format = "%m/%d/%Y")
 SMS = RemoveSpecialCharacters(SMS)
 
 #Create subsets of the student street addresses
-SMS = SubsetStreets(SMS)
+SMS = SubsetWords(SMS, Vars = c("Mailing_Street", "X2nd_mailing_street", "Street"), Varname = "streetPart")
 
 #Create parent name search fields
-SMS = BreakNames(SMS)
-
+SMS = SubsetWords(SMS, Vars = c("guardian", "Father", "Mother","Guardian_FN", "Guardian_LN", "Guardian_MN"), Varname = "gName")
 
 
 #Create the matching array
@@ -40,42 +43,19 @@ Matcher = array(
 
 
 #Build the primary matches
-Matcher = Build.Primary(Matcher, SMS, DirectCert)
-Matcher = M2
+Matcher = Build.Primary(Matcher, SMS, DirectCert, messageLevel = messageLevel)
+
 
 #Discard 0 matches
 #MatchCounts = apply(X = Matcher, MARGIN =c(3), FUN = sum)
 #M3 = Matcher[,,MatchCounts > 0]
 
+
 #Build Secondary matches
-MatchScores = Build.Secondary(Matcher)
+MatchScores = Build.Secondary(Matcher, messageLevel = messageLevel)
 
-#Build the output
-output = data.frame(NA)
-output[,colnames(SMS[,1:21])] = NA
-output = output[-1,-1]
-i = 1
 
-for (i in 1:12){
-  DirectCert[,i] = as.character(DirectCert[,i])
-}
-
-for (i in 1:21){
-  SMS[,i] = as.character(SMS[,i])
-}
-
-q = rep("", times = 21)
-
-for (i in 1:nrow(SMS)){
-  x = DirectCert[names(tail(sort(MatchScores[i,]),5)),]
-  x[,13:21] = NA
-  colnames(x) = colnames(output)
-  y = SMS[i,1:21]
-  output = rbind(output, y)
-  output = rbind(output, x)
-  output = rbind(output, q)
-}
-
-write.csv(output, file = "DirectCertMatches.csv")
+#Produce the output
+Outputter(DirectCert, SMS, MatchScores)
 
 
