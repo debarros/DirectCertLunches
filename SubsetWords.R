@@ -12,7 +12,7 @@ SubsetWords = function(SMS, Vars, Varname, AddtlVars = c(), n = NA_integer_, Sor
   
   # Narrow the list of variables to only those that are character.  This removes variables that have no data.
   whichToUse = vector(mode = "logical", length = length(Vars))
-  for(i in 1:length(whichToUse)){whichToUse[i] = typeof(SMS[,Vars[i]]) == "character"}
+  for(i in 1:length(whichToUse)){whichToUse[i] = !all(is.na(SMS[,Vars[i]]))}
   Vars = Vars[whichToUse]
   
   z = vector(mode = "list", length = length(Vars))  #inititalize the list to hold the split words
@@ -26,8 +26,11 @@ SubsetWords = function(SMS, Vars, Varname, AddtlVars = c(), n = NA_integer_, Sor
   z = apply(X = z, FUN = unique, MARGIN = 1)                   #remove duplicates
   z = lapply(z, one.drop)                                      #eliminate words that have only one character or are empty
   z = lapply(z, setlength, y = max(unlist(lapply(z, length)))) #increase the length of each vector to the max
-  z = do.call(rbind.data.frame, z)                             #convert the list of vectors into a data.frame
+  z = do.call(rbind.data.frame, z)               #convert the list of vectors into a data.frame
   colnames(z) = paste0(Varname,1:ncol(z))                    #add column names
+  for(i in 1:ncol(z)){
+    if(is.factor(z[,i])){z[,i] = as.character(z[,i])}
+  }
   
   SMS = cbind.data.frame(SMS, z) #add the new columns to the existing SMS data.frame
   
