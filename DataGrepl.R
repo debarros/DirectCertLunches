@@ -14,12 +14,27 @@ DataGrepl = function(CompArray, row.data, col.data, firstdim, seconddim, dimensi
   
   if(messageLevel > 0) message("starting DataGrepl function")
   
+  if(messageLevel > 1) message("get row info")
   row.info = row.data[,firstdim]
+  
+  if(messageLevel > 1) message("get col info")
   col.info = col.data[,seconddim]
+  
+  if(messageLevel > 1) message("make q")
   q = row.info[match(x = unlist(dimnames(CompArray)[dimensions[1]]), table = rownames(row.data))]
+  
+  if(messageLevel > 1) message("make r")
   r = col.info[match(x = unlist(dimnames(CompArray)[dimensions[2]]), table = rownames(col.data))]
+  
+  if(messageLevel > 1) message("call Vgrepl to make output")
   output = t(Vgrepl(pattern = q, x = r))
+  
+  gc()
+  
+  if(messageLevel > 1) message("set output dimnames")
   dimnames(output) = dimnames(CompArray)[dimensions]
+  
+  gc()
   
   if(messageLevel > 0) message("Ending DataGrepl function")
   
