@@ -14,5 +14,8 @@ DataComp = function(CompArray, row.data, col.data, firstdim, seconddim, dimensio
   r = col.info[match(x = unlist(dimnames(CompArray)[dimensions[2]]), table = rownames(col.data))]
   output = VbetterComp(q, r)
   dimnames(output) = dimnames(CompArray)[dimensions]
+  
+  gc()
+  
   return(output)
 }

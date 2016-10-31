@@ -29,6 +29,8 @@ DataDate = function(CompArray, row.data, col.data, firstdim, seconddim, datePart
   output = VbetterComp(q, r, messageLevel = messageLevel - 1)
   dimnames(output) = dimnames(CompArray)[dimensions]
   
+  gc()
+  
   if(messageLevel > 0) message("Ending DataDate function")
   
   return(output)
