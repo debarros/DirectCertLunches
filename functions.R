@@ -1,11 +1,11 @@
 #functions
 #This loads all of the functions to be used
 
-
+library(openxlsx)
+library(abind)
 
 #These functions are large, and so are stored in separate files
-#source("CompileOutput1.R")
-#source("CompileOutputMany.R")
+source("Outputter.R")
 source("SubsetWords.R")
 source("RemoveSpecialCharacters.R")
 source("MissingZips.R")
@@ -14,7 +14,6 @@ source("DataComp.R")
 source("Astack.R")
 source("Build.Primary.R")
 source("DataGrepl.R")
-#source("BreakNames.R")
 source("Build.Secondary.R")
 source("DataDate.R")
 source("Vgrep.R")
