@@ -23,5 +23,7 @@ Splitter = function(SMS, Var, n = NA_integer_, Sort = F){
     z = z[,1:maxcols]
   } 
   
+  gc()
+  
   return(z)
 }
