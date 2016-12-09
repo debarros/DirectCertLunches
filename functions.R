@@ -1,10 +1,14 @@
 #functions
 #This loads all of the functions to be used
 
+# Libraries ####
 library(openxlsx)
 library(abind)
+library(shiny)
 
+# Large Functions ####
 #These functions are large, and so are stored in separate files
+source("AnalyzeHandMatches.R")
 source("Outputter.R")
 source("SubsetWords.R")
 source("RemoveSpecialCharacters.R")
@@ -18,8 +22,10 @@ source("DataDate.R")
 source("Vgrep.R")
 source("Vgrepl.R")
 source("Splitter.R")
+source("RadioGrid.R")
+source("MatchingProcess.R")
 
-
+# Small Functions ####
 #This function allows finding the intersection of several sets
 intersectSeveral <- function(...) { Reduce(intersect, list(...)) } 
 
@@ -37,3 +43,10 @@ SortLength = function(x){x[sort(nchar(x), decreasing = TRUE, index.return = TRUE
 na.to.empty = function(x){x[which(is.na(x))] = ""
 return(x)}
 
+
+# Static Data and Options ####
+#this is just all the variables in the DirectCert file
+dcVars = c("Case.Name.Guardian","First.Name","Last.Name","DOB","Age","Street","City","State","Zip","Case.Type","Case.Num","Mon.YYYY") 
+#these are the different nameForms to use
+nameForms = c("RemoveCharacters", "SpaceCharacters", "RemoveAfterCharacters")
+options(shiny.maxRequestSize=30*1024^2)
