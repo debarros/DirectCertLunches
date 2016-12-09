@@ -2,7 +2,9 @@
 #This function creates versions of the student names that remove special characters like spaces, hyphens, or apostrophes
 
 RemoveSpecialCharacters = function (Students, Vars, nameForms, messageLevel = 0){
-
+  
+  if(messageLevel > 0) message("running RemoveSpecialCharacters function")
+  
   for (i in 1:length(Vars)){
     #This just removes any special characters
     Students[,paste0(names(Vars[i]),"RemoveCharacters")] = gsub("\\W","",Students[,Vars[[i]]])
@@ -14,5 +16,7 @@ RemoveSpecialCharacters = function (Students, Vars, nameForms, messageLevel = 0)
     Students[,paste0(names(Vars[i]),"RemoveAfterCharacters")] = toupper(gsub("\\W\\w+"," ",Students[,Vars[[i]]])) 
   }
 
+  if(messageLevel > 0) message("done running RemoveSpecialCharacters function")
+  
   return(Students)
 }
