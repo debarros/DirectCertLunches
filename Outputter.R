@@ -1,9 +1,15 @@
 #Outputter.R
 
-Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars, streetVars, guardVars, cityVars, messageLevel = 0, n = 5){
+Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars, streetVars, guardVars, cityVars, zipVars, messageLevel = 0, n = 5){
+  
+  if(messageLevel > 0) message("running Outputter function")
+  
+  if(messageLevel > 1) message("make SMS.matched.out")
   
   SMS.matched.out = SMS.matched[order(SMS.matched$Case.Type,SMS.matched$Student_Number, decreasing = T),]
   SMS.matched.out = SMS.matched.out[!duplicated(SMS.matched.out$Student_Number),]
+  
+  if(messageLevel > 1) message("make DirectCertOut")
   
   DirectCertOut = data.frame(
     Student = paste(DirectCert$First.Name, DirectCert$Last.Name, sep = " "),
@@ -18,6 +24,8 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
     )
   row.names(DirectCertOut) = row.names(DirectCert)
   
+  if(messageLevel > 1) message("make SMSout")
+  
   SMSout = data.frame(
     Student  = apply(SMS[,unlist(studentNameVars)], 1, paste, collapse = " "),
     Guardian = apply(SMS[,guardVars], 1, paste, collapse = ", "),
@@ -30,6 +38,8 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
     stringsAsFactors = F
   )
   row.names(SMSout) = row.names(SMS)
+  
+  if(messageLevel > 1) message("make output object")
   
   output = matrix(NA,0,ncol(DirectCertOut))
   colnames(output) = colnames(DirectCertOut)
@@ -63,6 +73,8 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
   output$CorrectMatch = ""
   output = output[,c(ncol(output),1:(ncol(output)-1))]
   
+  if(messageLevel > 1) message("make the output workbook")
+  
   wb = createWorkbook() # initialize the workbook
   
   addWorksheet(wb=wb, sheetName = "Potential.Matches")
@@ -79,7 +91,7 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
   addStyle(wb, "Case.Matches", createStyle(textDecoration = "bold"), rows = 1, cols = 1:ncol(SMS.matched.out), gridExpand = T, stack = T)
   writeData(wb=wb, sheet = "Case.Matches", x = SMS.matched.out)
   
-  saveWorkbook(wb = wb, file =  paste0("DirectCertMatches.xlsx"), overwrite = T)
+  if(messageLevel > 1) message("done running Outputter function")
+  
+  return(wb)
 }
-
-
