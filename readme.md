@@ -15,6 +15,8 @@ The speed might also be improved by making use of parallel processing.
 * The output should have a drop-down box or restricted input for the first column
 * The user should be able to select what matching functions to use.
 * The available matching functions should include phonetic algorithms (e.g. Soundex).  The R phonics package looks good for this.
+* There should also be a set of exemplar files.  These could be downloaded from the first tab in the interface.
+* The shiny app should also have instructions, possibly located in a separate Instructions tab.
 
 
 ##Some conventions
