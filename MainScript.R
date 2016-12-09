@@ -15,7 +15,7 @@
 
 #CaseMatches.csv holds the known cases that have been matched to students in the past.  
 #It should be modified to include the date of extract.
-#That way, a function can be written to purge if of cases that are very old.
+#That way, a function can be written to purge it of cases that are very old.
 
 #The AnalyzeHandMatches code should be mofied to allow for one more indicator value in the first column
 # ? - a potential match that requires more research
@@ -25,6 +25,10 @@
 source("functions.R")
 
 messageLevel = 5
+
+
+
+
 
 #Load the data sets from PowerSchool (SMS), the Direct Certification file (DirectCert), and the known matches (DC.Case.Matches)
 SMS <- read.csv("smsExport.csv", stringsAsFactors = FALSE)
@@ -38,6 +42,12 @@ if(!identical(colnames(DirectCert), dcVars)){
 }
 
 
+#If this is not the first time through, load the hand matches and analyze them
+handMatch = read.xlsx(xlsxFile = "matched records.xlsx", sheet = "Potential.Matches")
+DC.Case.Matches = HandMatcher(handMatch, DC.Case.Matches)
+write.csv(x = DC.Case.Matches, file = "DC.Case.Matches.csv", row.names = F)
+
+
 
 #remove duplicates from direct cert file
 DirectCert$all = apply(DirectCert, 1, paste, collapse = " ")
@@ -48,14 +58,26 @@ DirectCert = DirectCert[,1:(ncol(DirectCert)-1)]
 
 #Establish the sets of variables from the SMS to be used, and the modified name formats to be used
 #This needs to be modified to allow vectors of first names, middle names, and last names, instead of just one SMS variable for each
-studentNameVars = list("First" = "First_Name", "Last" = "Last_Name", "Middle" = "Middle_Name")
 nameForms = c("RemoveCharacters", "SpaceCharacters", "RemoveAfterCharacters")
-streetVars = c("Mailing_Street", "X2nd_mailing_street", "Street")
-guardVars = c("guardian", "Father", "Mother","Guardian_FN", "Guardian_LN", "Guardian_MN", "Emerg_Contact_1", "Emerg_Contact_2","Emerg_Contact_3", "guardianship","StepParent")
-cityVars = c("Mailing_City","City","X2nd_mailing_city")
-zipVars = c("X2nd_mailing_zip", "Mailing_Zip", "Zip")
+studentNameVars = list("First" = "First_Name", "Last" = "Last_Name", "Middle" = "Middle_Name")
+streetVars = c("Street")
+guardVars = c("Father", "Mother")
+cityVars = c("City")
+zipVars = c("Zip")
+dobVars = c("DOB")
 
 
+VariableSets = list(
+  "studentNameVars" = studentNameVars,
+  "streetVars" = streetVars,
+  "guardVars" = guardVars,
+  "cityVars" = cityVars,
+  "zipVars" = zipVars,
+  "dobVars" = dobVars
+)
+
+
+wb.output = MatchingProcess(DC.Case.Matches, DirectCert, SMS, dcVars, VariableSets, nameForms)
 
 
 #From SMS, remove the students who are already matched in the DC.Case.Matches file
@@ -124,6 +146,6 @@ MatchScores = Build.Secondary(Matcher, nameForms, messageLevel = messageLevel)
 gc()
 
 #Produce the output
-Outputter(SMS.matched,DirectCert, SMS, MatchScores, studentNameVars, streetVars, guardVars, cityVars, messageLevel = messageLevel)
-
+outputWorkbook = Outputter(SMS.matched,DirectCert, SMS, MatchScores, studentNameVars, streetVars, guardVars, cityVars, messageLevel = messageLevel)
+saveWorkbook(wb = wb.output, file = "newTestRun.xlsx", overwrite = T)
 
