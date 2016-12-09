@@ -1,8 +1,8 @@
 #Build.Primary.R
+#Right now, dobVars is restricted to a length of 1.  This should be changed in the future.
+#Right now, First, Last, and Middle names for the student can be held in 1 variable only.  This should be changed in the future.
 
-#This should be broken up into those matches that require DataGrepl and those that can just use DatComp
-
-Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, messageLevel = 0){
+Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, dobVars, messageLevel = 0){
   if(messageLevel > 0) message("starting Build.Primary function")
   
   if(messageLevel > 1) message("set guardnames and streetnames")
@@ -12,6 +12,12 @@ Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, m
   citynames = length(grep(pattern = "muni", x = colnames(SMS), ignore.case = T)) #how many city variables in SMS?
   zipnames = length(grep(pattern = "zipped", x = colnames(SMS), ignore.case = T)) #how many zip variables in SMS?
   
+  if(messageLevel > 1) message("remove unused student name and DOB variables")
+  for(i in 1:length(studentNameVars)){
+    studentNameVars[[i]] = studentNameVars[[i]][1]
+  }
+  dobVars = dobVars[1]
+  
   if(messageLevel > 1) message("build sets of variables")
   
   sets = list()
@@ -20,14 +26,16 @@ Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, m
   sets$Zip = list("PS" = paste0("zipped",1:zipnames), "DC" = c("Zip"))
   sets$Street = list("PS" = paste0("streetPart",1:streetnames), "DC" = c("Street"))
   sets$City = list("PS" = paste0("muni",1:citynames), "DC" = c("City"))
-  sets$DOB = list("PS" = c("Year","Month","Day"), "DC" = c("DOB"))
+  sets$DOB = list("PS" = apply(X = expand.grid(dobVars, c("Year","Month","Day"), stringsAsFactors = F), MARGIN = 1, FUN = paste0, collapse = " "), "DC" = c("DOB"))
   
   if(messageLevel > 1) message("make the data.frame showing all pairs of variables to be matched")
   
-  y = data.frame(Var1 = character(), Var2 = character(), stringsAsFactors = F)
+  y = data.frame(SMSvar = character(), DCvar = character(), stringsAsFactors = F)
   
+  i = 1
   for(i in 1:6){
     x = expand.grid(sets[[i]]$PS, sets[[i]]$DC, stringsAsFactors = F)
+    colnames(x) = colnames(y)
     y = rbind(y,x)
     gc()
   }
@@ -36,28 +44,29 @@ Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, m
   
   if(messageLevel > 1) message("loop through all pairs of variables")
   
+  
+  
   for(i in 1:(nrow(y))){
     print(paste0("Match #",i," of ",nrow(y)))
     if(y[i,2] == "DOB") {
-      z = DataDate(Matcher, SMS, DirectCert, "DOB", y[i,2], datePart = y[i,1], messageLevel = messageLevel - 1)
+      z = DataDate(Matcher, SMS, DirectCert, dobVars, y[i,2], datePart = y[i,1], messageLevel = messageLevel - 1)
     } else {
       z = DataGrepl(Matcher, SMS, DirectCert, y[i,1], y[i,2], messageLevel = messageLevel - 1)
     }
     gc()
-    #M2 = Astack(M2, z, messageLevel = messageLevel -1)
     M2 = abind(M2, z, along = 3)
     gc()
-    print(object.size(M2))
   }
   gc()
   rm(list = "z")
   gc()
   
-  if(messageLevel > 1) message("and now something with dimnames")
+  if(messageLevel > 1) message("Use the pairs of variable names to label the matched information")
   
-  v = dimnames(Matcher)[1:2]
-  v$Type = paste(y$Var1," X ", y$Var2)
-  dimnames(M2) = v
+
+  v = dimnames(Matcher)[1:2]               #get the dimnames from the empty object
+  v$Type = paste(y$SMSvar," X ", y$DCvar)  #add the dimnames for the third dimenions (the variable pairs)
+  dimnames(M2) = v                         #apply the dimnames to the complete object
   
   gc()
   
@@ -65,5 +74,3 @@ Build.Primary = function(Matcher, SMS, DirectCert, studentNameVars, nameForms, m
   
   return(M2)
 }
-
-
