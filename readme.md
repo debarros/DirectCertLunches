@@ -6,11 +6,14 @@ This repository is used for matching student information from the SMS (student m
 In NY State, this is valuable when trying to identify students who qualify for free or reduced price lunch (FRPL).
 
 ##Current state and future plans
-Currently, the code is set up specific to PowerSchool, and specific to the particular variables my organization uses in PowerSchool.
-Ideally, I'd like to make it more flexible.
-For each variable in the Direct Cert files, you should be able to select which variables in your SMS export might contain related information.
+This has now been converted into a shiny app, available at https://debarros.shinyapps.io/DirectCertLunches/
+Currently, it takes a really, really long time to run, particularly if the data sets are large.
+The slow speed might be improved by creating compiled versions of vgrepl, datagrepl, etc.
+The speed might also be improved by making use of parallel processing.
+The program tends to exceed the memory capacity of a typical computer, and is best run on a server.
+It needs to be modified to allow for multiple variables associated with each of the following student variables: DOB, first name, last name
+The output should have a drop-down box or restricted input for the first column
 
-Also, I would like to eventually turn this into a Shiny App and host it on ShinyApps.io.  We'll see how that goes.
 
 ##Some conventions
 ###messagelevel
