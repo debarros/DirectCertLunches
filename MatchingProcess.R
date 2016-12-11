@@ -21,7 +21,7 @@ MatchingProcess = function(DC.Case.Matches, DirectCert, SMS, dcVars, VariableSet
   zipVars = VariableSets$zipVars
   dobVars = VariableSets$dobVars
 
-  
+  if(!is.null(DC.Case.Matches)){
   if(messageLevel > 1) message("Remove students already in the DC.Case.Matches File")
   #From SMS, remove the students who are already matched in the DC.Case.Matches file
   DC.Case.Matches.current = DC.Case.Matches[DC.Case.Matches$Case.Num %in% DirectCert$Case.Num,]
@@ -32,6 +32,9 @@ MatchingProcess = function(DC.Case.Matches, DirectCert, SMS, dcVars, VariableSet
   SMS.matched[,colnames(SMS)[colnames(SMS) != "Student_number"]] = SMS[match(SMS.matched$Student_Number,SMS$Student_number),colnames(SMS)[colnames(SMS) != "Student_number"]]  
   SMS = SMS[!SMS$Matched,1:(ncol(SMS)-1)]
   row.names(SMS) = NULL
+  } else {
+    SMS.matched = NULL
+  }
   
   if(messageLevel > 1) message("Format DOB variables")
   #Change the DOB variables to be stored in date format
