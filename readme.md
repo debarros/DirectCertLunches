@@ -17,6 +17,8 @@ The speed might also be improved by making use of parallel processing.
 * The available matching functions should include phonetic algorithms (e.g. Soundex).  The R phonics package looks good for this.
 * There should also be a set of exemplar files.  These could be downloaded from the first tab in the interface.
 * The shiny app should also have instructions, possibly located in a separate Instructions tab.
+* The CaseMatches.csv output (created if MainScript.R is used) should be available for download from the web interface.
+
 
 
 ##Some conventions
