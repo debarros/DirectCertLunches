@@ -1,5 +1,8 @@
 #AnalyzeHandMatches.R
-
+#This function looks through a prior output file and (if available) a table of existing case matches
+#It find all of the matches identified in the prior output file
+#It then puts them in the table of case matches (creating it first if necessary)
+#It returns the table of case matches
 
 HandMatcher = function(handMatch, DC.Case.Matches = NULL, messageLevel = 0){
   
