@@ -5,6 +5,7 @@ HandMatcher = function(handMatch, DC.Case.Matches = NULL, messageLevel = 0){
   
   if(messageLevel > 0) message("running HandMatcher function")
   
+  if(!is.null(handMatch$Student)){
   nCases = which(is.na(handMatch$Student))[1] - 2
   print("a")
   nStudents = nrow(handMatch)/(nCases+2)
@@ -48,6 +49,8 @@ HandMatcher = function(handMatch, DC.Case.Matches = NULL, messageLevel = 0){
   if(messageLevel > 0) message("done running HandMatcher function")
   
   print("g")
-  
+  } else {
+    DC.Case.Matches = NULL
+  }
   return(DC.Case.Matches) 
 }
