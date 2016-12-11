@@ -6,8 +6,13 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
   
   if(messageLevel > 1) message("make SMS.matched.out")
   
-  SMS.matched.out = SMS.matched[order(SMS.matched$Case.Type,SMS.matched$Student_Number, decreasing = T),]
-  SMS.matched.out = SMS.matched.out[!duplicated(SMS.matched.out$Student_Number),]
+  if(!is.null(SMS.matched)){
+    SMS.matched.out = SMS.matched[order(SMS.matched$Case.Type,SMS.matched$Student_Number, decreasing = T),]
+    SMS.matched.out = SMS.matched.out[!duplicated(SMS.matched.out$Student_Number),]  
+  } else {
+    SMS.matched.out = NULL
+  }
+  
   
   if(messageLevel > 1) message("make DirectCertOut")
   
@@ -85,11 +90,13 @@ Outputter = function(SMS.matched, DirectCert, SMS, MatchScores, studentNameVars,
   addStyle(wb, "Potential.Matches", createStyle(textDecoration = "bold"), rows = (1:nrow(SMSout))*(n+2) - n, cols = 1:ncol(output), gridExpand = T, stack = T)
   writeData(wb=wb, sheet = "Potential.Matches", x = output)
   
+  if(!is.null(SMS.matched.out)){
   addWorksheet(wb=wb, sheetName = "Case.Matches")
   freezePane(wb, "Case.Matches", firstActiveRow = 2, firstActiveCol = 8)
   setColWidths(wb, "Case.Matches", cols = 1:ncol(output), widths = "auto", ignoreMergedCells = FALSE)
   addStyle(wb, "Case.Matches", createStyle(textDecoration = "bold"), rows = 1, cols = 1:ncol(SMS.matched.out), gridExpand = T, stack = T)
   writeData(wb=wb, sheet = "Case.Matches", x = SMS.matched.out)
+  }
   
   if(messageLevel > 1) message("done running Outputter function")
   
