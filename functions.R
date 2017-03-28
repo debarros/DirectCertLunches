@@ -8,7 +8,7 @@ library(shiny)
 
 # Large Functions ####
 #These functions are large, and so are stored in separate files
-source("AnalyzeHandMatches.R")
+source("HandMatcher.R")
 source("Outputter.R")
 source("SubsetWords.R")
 source("RemoveSpecialCharacters.R")
